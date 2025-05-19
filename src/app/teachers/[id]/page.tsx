@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Star, Users, Briefcase, BookOpen, DollarSign, Video, Mail, MessageSquare, Award, BookCopy, Brain, Edit3, CalendarClock, Clock } from 'lucide-react';
+import { Star, Users, Briefcase, BookOpen, Video, Mail, MessageSquare, Award, BookCopy, Brain, Edit3, CalendarClock, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
@@ -55,11 +55,11 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                 <Briefcase className="h-4 w-4" /> {teacher.experienceYears} years of experience
               </div>
-              {teacher.hourlyRate && (
+              {teacher.monthlyFee && (
                 <div className="flex items-center gap-1 text-lg font-semibold text-foreground mt-2">
-                    <DollarSign className="h-5 w-5 text-primary"/>
-                    {teacher.hourlyRate.toFixed(2)}
-                    <span className="text-xs text-muted-foreground ml-1">/hr (for regular classes)</span>
+                    <span className="text-primary font-bold text-xl">₹</span>
+                    {teacher.monthlyFee.toLocaleString('en-IN')} 
+                    <span className="text-xs text-muted-foreground ml-1">/month (for regular classes)</span>
                 </div>
               )}
             </div>
@@ -179,15 +179,17 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                  <CardHeader>
                      <CardTitle className="flex items-center gap-2"><Video className="text-accent h-6 w-6"/> Book a Demo Class</CardTitle>
                      <CardDescription>
-                        Duration: {teacher.demoDetails.duration} | Cost: {teacher.demoDetails.cost !== undefined && teacher.demoDetails.cost > 0 ? `$${teacher.demoDetails.cost.toFixed(2)}` : 'Free'}
+                        Duration: {teacher.demoDetails.duration} | Cost: {teacher.demoDetails.cost !== undefined && teacher.demoDetails.cost > 0 ? `₹${teacher.demoDetails.cost.toLocaleString('en-IN')}` : 'Free'}
                      </CardDescription>
                  </CardHeader>
                  <CardContent className="space-y-3">
                     {teacher.demoDetails.description && <p className="text-sm text-muted-foreground mb-3">{teacher.demoDetails.description}</p>}
-                    <Button className="w-full" size="lg">
-                        <Edit3 className="mr-2"/>
-                        Request Demo Session
-                    </Button>
+                    <Link href="/#book-demo" className="block w-full">
+                      <Button className="w-full" size="lg">
+                          <Edit3 className="mr-2"/>
+                          Request Demo Session
+                      </Button>
+                    </Link>
                     {/* Consider linking to a specific booking form for this teacher later */}
                     <Button variant="outline" className="w-full">
                         <Mail className="mr-2"/>
@@ -218,4 +220,3 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
     </div>
   );
 }
-

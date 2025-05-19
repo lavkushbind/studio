@@ -19,7 +19,7 @@ export interface Teacher {
   gradeLevelsTaught: string[]; // e.g., ["Grades 1-3", "Grades 4-6", "Middle School (7-8)", "High School (9-10)"]
   experienceYears: number;
   teachingPhilosophy?: string;
-  hourlyRate?: number; // For regular classes
+  monthlyFee?: number; // Changed from hourlyRate to monthlyFee
   qualifications?: string[]; // e.g., ["M.Ed. in Curriculum", "B.S. in Physics"]
   videoIntroUrl?: string; // Link to a short video introduction
 
@@ -28,7 +28,7 @@ export interface Teacher {
     offered: boolean;
     duration: string; // e.g., "30 minutes"
     description?: string; // What to expect in the demo
-    cost?: number; // 0 for free demo, or a nominal fee
+    cost?: number; // 0 for free demo, or a nominal fee (in Rupees)
   };
 
   // Teacher's overall rating and review count

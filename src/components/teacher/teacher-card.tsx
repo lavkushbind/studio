@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, BookOpen, Users, Briefcase, Video, DollarSign } from 'lucide-react';
+import { Star, BookOpen, Users, Briefcase, Video } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface TeacherCardProps {
@@ -58,16 +58,16 @@ export default function TeacherCard({ teacher }: TeacherCardProps) {
          {teacher.demoDetails.offered && (
             <div className="flex items-center gap-1 text-sm text-green-600">
                 <Video className="h-4 w-4"/>
-                Free Demo Available ({teacher.demoDetails.duration})
+                 {teacher.demoDetails.cost === 0 ? "Free Demo" : `Demo @ ₹${teacher.demoDetails.cost?.toLocaleString('en-IN') || 'Contact'}`} ({teacher.demoDetails.duration})
             </div>
         )}
       </CardContent>
       <CardFooter className="p-4 pt-0 flex flex-col sm:flex-row justify-between items-center border-t mt-auto gap-2">
-        {teacher.hourlyRate && (
+        {teacher.monthlyFee && (
             <div className="flex items-center font-semibold text-lg">
-                <DollarSign className="h-5 w-5 mr-1 text-primary"/>
-                {teacher.hourlyRate.toFixed(2)}
-                <span className="text-xs text-muted-foreground ml-1">/hr</span>
+                <span className="text-primary font-bold text-xl mr-1">₹</span>
+                {teacher.monthlyFee.toLocaleString('en-IN')}
+                <span className="text-xs text-muted-foreground ml-1">/month</span>
             </div>
         )}
         <Link href={`/teachers/${teacher.id}`} className="w-full sm:w-auto">

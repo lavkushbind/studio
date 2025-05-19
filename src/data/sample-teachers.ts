@@ -14,7 +14,7 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 8,
     teachingPhilosophy:
       'To make learning an adventure, fostering curiosity and critical thinking through interactive and personalized lessons.',
-    hourlyRate: 55,
+    monthlyFee: 4500, // Updated to monthly fee in Rupees
     qualifications: ['PhD in Applied Mathematics', 'Certified Math Teacher (Grades 6-12)'],
     videoIntroUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', // Placeholder video
     demoDetails: {
@@ -43,7 +43,7 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 5,
     teachingPhilosophy:
       'Sparking imagination and a love for reading and history through engaging stories and hands-on activities.',
-    hourlyRate: 45,
+    monthlyFee: 3500, // Updated to monthly fee in Rupees
     qualifications: ["Master's in Elementary Education", 'Reading Specialist Certificate'],
     demoDetails: {
       offered: true,
@@ -70,13 +70,13 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 4, // Teaching experience, more in industry
     teachingPhilosophy:
       'Empowering students to become creators with technology through hands-on projects and real-world applications.',
-    hourlyRate: 60,
+    monthlyFee: 5000, // Updated to monthly fee in Rupees
     qualifications: ['B.S. in Computer Science', 'Professional Software Developer'],
     demoDetails: {
       offered: true,
       duration: '40 minutes',
       description: 'Introduction to a simple coding concept (e.g., Scratch block or Python basics), a mini-challenge, and Q&A about coding pathways.',
-      cost: 5,
+      cost: 100, // Demo cost in Rupees
     },
     rating: 4.8,
     reviews: 95,
@@ -98,7 +98,7 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 7,
     teachingPhilosophy:
       'Fostering a deep understanding and appreciation for the natural world through inquiry-based learning and real-world connections.',
-    hourlyRate: 50,
+    monthlyFee: 4200, // Updated to monthly fee in Rupees
     qualifications: ['PhD in Ecology', 'High School Science Teaching Credential'],
     videoIntroUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
     demoDetails: {
