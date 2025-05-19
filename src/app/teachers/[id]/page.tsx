@@ -1,21 +1,16 @@
 
 import type { Teacher } from '@/types/teacher';
 import { getTeacherById } from '@/services/teacherService';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge'; // No longer needed for this simplified view
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { Star, Briefcase, Users, Clock, UserCheck, UserX, Edit3, AlertTriangle, HomeIcon } from 'lucide-react';
+import { UserX, AlertTriangle, HomeIcon, Users } from 'lucide-react'; // Users for placeholder avatar
 import Link from 'next/link';
 // import Image from 'next/image'; // Image placeholder removed as avatar not in new model
 
 interface TeacherProfilePageProps {
   params: { id: string };
 }
-
-// Helper function to get student count for a slot
-const getCurrentStudentCount = (teacher: Teacher, slot: string): number => {
-  return teacher.currentStudents?.[slot]?.length || 0;
-};
 
 export default async function TeacherProfilePage({ params }: TeacherProfilePageProps) {
   let teacher: Teacher | null = null;
@@ -85,78 +80,28 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
         <div className="lg:col-span-2 space-y-6">
           {/* Teacher Header */}
           <div className="flex flex-col sm:flex-row gap-6 items-start p-6 border rounded-lg shadow-sm bg-card">
-            <div className="relative h-32 w-32 md:h-40 md:w-40 border-4 border-primary/30 flex-shrink-0 bg-muted rounded-full flex items-center justify-center">
+            <div className="relative h-32 w-32 md:h-40 md:w-40 border-4 border-primary/30 flex-shrink-0 bg-muted rounded-full flex items-center justify-center" data-ai-hint="teacher avatar placeholder">
                  <Users className="h-16 w-16 text-muted-foreground" />
-                 {/* <Image src="https://placehold.co/160x160.png" alt={teacher.name} layout="fill" objectFit="cover" className="rounded-full" /> */}
             </div>
             <div className="flex-grow">
               <h1 className="text-3xl md:text-4xl font-bold mb-1">{teacher.name}</h1>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" /> {teacher.rating?.toFixed(1)} / 5.0
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                <Briefcase className="h-4 w-4" /> {teacher.experience} years of experience
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                <Users className="h-4 w-4" /> Max {teacher.maxStudentsPerSlot} students per slot
-              </div>
+              {/* Other details like rating, experience, etc. are removed as per request */}
+               <CardDescription>Teacher ID: {teacher.id}</CardDescription>
             </div>
           </div>
 
-          {/* Preferred Standards */}
-          {teacher.preferredStandard && teacher.preferredStandard.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl"><UserCheck className="text-primary"/> Preferred Standards (Grades)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {teacher.preferredStandard.map(standard => (
-                    <Badge key={standard} variant="secondary" size="lg">Grade {standard}</Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Placeholder for other content if needed in future */}
+          <Card>
+            <CardHeader>
+                <CardTitle>About {teacher.name.split(' ')[0]}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground">More details about the teacher will be displayed here in the future.</p>
+                {/* For example, if a bio field were added back to the model:
+                {teacher.bio && <p>{teacher.bio}</p>} */}
+            </CardContent>
+          </Card>
 
-          {/* Available Slots */}
-          {teacher.availableSlots && teacher.availableSlots.length > 0 ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl"><Clock className="text-primary"/> Available Slots</CardTitle>
-                <CardDescription>Current student count / Max students per slot. Select a slot to book.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {teacher.availableSlots.map(slot => {
-                  const currentStudentsInSlot = getCurrentStudentCount(teacher, slot);
-                  const isSlotFull = currentStudentsInSlot >= teacher.maxStudentsPerSlot;
-                  return (
-                    <div key={slot} className={`p-4 border rounded-md flex justify-between items-center transition-all hover:shadow-md ${isSlotFull ? 'bg-muted/50' : 'bg-card'}`}>
-                      <div>
-                        <h4 className="font-semibold text-md">{slot}</h4>
-                        <p className={`text-sm ${isSlotFull ? 'text-destructive' : 'text-muted-foreground'}`}>
-                          {currentStudentsInSlot} / {teacher.maxStudentsPerSlot} students
-                        </p>
-                      </div>
-                      <Button size="sm" disabled={isSlotFull} variant={isSlotFull ? "secondary" : "default"}>
-                        {isSlotFull ? <UserX className="mr-2 h-4 w-4" /> : <Edit3 className="mr-2 h-4 w-4" />}
-                        {isSlotFull ? 'Slot Full' : 'Book Demo'}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          ) : (
-             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl"><Clock className="text-primary"/> Available Slots</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-muted-foreground">This teacher has not listed any available slots yet.</p>
-                </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Right Column (Sidebar - Simplified) */}
@@ -167,10 +112,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                  </CardHeader>
                  <CardContent className="space-y-3 text-sm">
                     <p><strong>Name:</strong> {teacher.name}</p>
-                    <p><strong>Rating:</strong> {teacher.rating.toFixed(1)} / 5.0</p>
-                    <p><strong>Experience:</strong> {teacher.experience} years</p>
-                    <p><strong>Max Students/Slot:</strong> {teacher.maxStudentsPerSlot}</p>
-                    <p><strong>Preferred Standards:</strong> Grade {teacher.preferredStandard.join(', Grade ') || 'Not specified'}</p>
+                    {/* Other summary details removed */}
                  </CardContent>
                  <CardFooter>
                     <Button className="w-full" onClick={() => alert('Contact teacher functionality to be implemented.')}>
@@ -185,8 +127,9 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
 }
 
 // Helper to add 'size' prop to Badge if it's not there in shadcn
-declare module '@/components/ui/badge' {
-  interface BadgeProps {
-    size?: 'sm' | 'md' | 'lg'; // example sizes
-  }
-}
+// This might not be needed anymore if badges are removed from this page.
+// declare module '@/components/ui/badge' {
+//   interface BadgeProps {
+//     size?: 'sm' | 'md' | 'lg'; // example sizes
+//   }
+// }
