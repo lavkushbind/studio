@@ -1,27 +1,41 @@
 
 import type { Teacher } from '@/types/teacher';
-import { sampleTeachersData } from '@/data/sample-teachers';
+import { getTeacherById } from '@/services/teacherService'; // Import Firebase service
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Star, Users, Briefcase, BookOpen, Video, Mail, MessageSquare, Award, BookCopy, Brain, Edit3, CalendarClock, Clock } from 'lucide-react';
+import { Star, Users, Briefcase, Video, Mail, Award, BookCopy, Brain, Edit3, CalendarClock, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 
 interface TeacherProfilePageProps {
   params: { id: string };
 }
 
-// Simulate fetching a single teacher by ID
-async function getTeacherById(id: string): Promise<Teacher | undefined> {
-  await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network delay
-  return sampleTeachersData.find((teacher) => teacher.id === id);
-}
-
+// This page is a Server Component, so we fetch data directly here.
 export default async function TeacherProfilePage({ params }: TeacherProfilePageProps) {
-  const teacher = await getTeacherById(params.id);
+  let teacher: Teacher | null = null;
+  let error: string | null = null;
+
+  try {
+    teacher = await getTeacherById(params.id);
+  } catch (err) {
+    console.error(`Failed to fetch teacher ${params.id}:`, err);
+    error = "Failed to load teacher profile. The teacher may not exist or there was a connection issue.";
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold text-destructive">Error</h1>
+        <p className="text-muted-foreground mt-2">{error}</p>
+        <Link href="/">
+          <Button variant="outline" className="mt-4">Back to Teacher Marketplace</Button>
+        </Link>
+      </div>
+    );
+  }
 
   if (!teacher) {
     return (
@@ -50,7 +64,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
               <h1 className="text-3xl md:text-4xl font-bold mb-1">{teacher.name}</h1>
               <p className="text-lg text-primary mb-3">{teacher.bioShort}</p>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" /> {teacher.rating.toFixed(1)} ({teacher.reviews} reviews)
+                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" /> {teacher.rating?.toFixed(1)} ({teacher.reviews} reviews)
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                 <Briefcase className="h-4 w-4" /> {teacher.experienceYears} years of experience
@@ -82,14 +96,16 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
           )}
 
           {/* Full Biography */}
-          <Card>
-            <CardHeader>
-              <CardTitle>About {teacher.name.split(' ')[0]}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-base whitespace-pre-line text-foreground/90">{teacher.fullBio}</p>
-            </CardContent>
-          </Card>
+          {teacher.fullBio && (
+            <Card>
+              <CardHeader>
+                <CardTitle>About {teacher.name.split(' ')[0]}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-base whitespace-pre-line text-foreground/90">{teacher.fullBio}</p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Teaching Philosophy */}
           {teacher.teachingPhilosophy && (
@@ -105,22 +121,26 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
           
           {/* Subjects and Grade Levels */}
           <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-                <CardHeader><CardTitle className="flex items-center gap-2"><BookCopy className="text-primary"/> Subjects Taught</CardTitle></CardHeader>
-                <CardContent>
-                    <ul className="space-y-1">
-                        {teacher.subjectsTaught.map(subject => <li key={subject}><Badge variant="secondary">{subject}</Badge></li>)}
-                    </ul>
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader><CardTitle className="flex items-center gap-2"><Users className="text-primary"/> Grade Levels</CardTitle></CardHeader>
-                <CardContent>
-                     <ul className="space-y-1">
-                        {teacher.gradeLevelsTaught.map(grade => <li key={grade}><Badge variant="outline">{grade}</Badge></li>)}
-                    </ul>
-                </CardContent>
-            </Card>
+            {teacher.subjectsTaught && teacher.subjectsTaught.length > 0 && (
+                <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2"><BookCopy className="text-primary"/> Subjects Taught</CardTitle></CardHeader>
+                    <CardContent>
+                        <ul className="space-y-1">
+                            {teacher.subjectsTaught.map(subject => <li key={subject}><Badge variant="secondary">{subject}</Badge></li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+            )}
+            {teacher.gradeLevelsTaught && teacher.gradeLevelsTaught.length > 0 && (
+                 <Card>
+                    <CardHeader><CardTitle className="flex items-center gap-2"><Users className="text-primary"/> Grade Levels</CardTitle></CardHeader>
+                    <CardContent>
+                        <ul className="space-y-1">
+                            {teacher.gradeLevelsTaught.map(grade => <li key={grade}><Badge variant="outline">{grade}</Badge></li>)}
+                        </ul>
+                    </CardContent>
+                </Card>
+            )}
           </div>
 
           {/* Weekly Availability */}
@@ -134,7 +154,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                 {teacher.weeklyAvailability.map(dailySlots => (
                   <div key={dailySlots.day}>
                     <h4 className="font-semibold text-md mb-1">{dailySlots.day}</h4>
-                    {dailySlots.slots.length > 0 ? (
+                    {dailySlots.slots && dailySlots.slots.length > 0 ? (
                       <ul className="space-y-1 pl-1">
                         {dailySlots.slots.map(slot => (
                           <li key={slot.time} className="text-sm text-muted-foreground flex items-center gap-2">
@@ -152,7 +172,6 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
               </CardContent>
             </Card>
           )}
-
 
           {/* Qualifications */}
           {teacher.qualifications && teacher.qualifications.length > 0 && (
@@ -174,7 +193,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
         {/* Right Column (Sidebar) */}
         <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-8 self-start">
             {/* Demo Class Card */}
-            {teacher.demoDetails.offered && (
+            {teacher.demoDetails && teacher.demoDetails.offered && (
              <Card className="shadow-lg border border-primary/20">
                  <CardHeader>
                      <CardTitle className="flex items-center gap-2"><Video className="text-accent h-6 w-6"/> Book a Demo Class</CardTitle>
@@ -190,7 +209,6 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                           Request Demo Session
                       </Button>
                     </Link>
-                    {/* Consider linking to a specific booking form for this teacher later */}
                     <Button variant="outline" className="w-full">
                         <Mail className="mr-2"/>
                         Message {teacher.name.split(' ')[0]}
@@ -207,9 +225,9 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                 <CardContent>
                 <div className="flex items-center gap-2 mb-2">
                     {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-5 w-5 ${i < Math.round(teacher.rating) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground/50'}`} />
+                    <Star key={i} className={`h-5 w-5 ${i < Math.round(teacher.rating || 0) ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground/50'}`} />
                     ))}
-                    <span className='ml-2 text-sm text-muted-foreground'>{teacher.rating.toFixed(1)} average from {teacher.reviews} reviews</span>
+                    <span className='ml-2 text-sm text-muted-foreground'>{teacher.rating?.toFixed(1)} average from {teacher.reviews} reviews</span>
                 </div>
                 <p className="text-sm text-muted-foreground">Detailed reviews will be displayed here once available.</p>
                 {/* TODO: Implement review display component */}

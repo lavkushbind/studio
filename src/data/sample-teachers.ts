@@ -1,9 +1,11 @@
 
 import type { Teacher } from '@/types/teacher';
 
+// This sample data can be used for initial testing or as a fallback.
+// For production, you should populate your Firebase Realtime Database.
 export const sampleTeachersData: Teacher[] = [
   {
-    id: 'teacher-alice-001',
+    id: 'teacher-alice-001', // In Firebase, this would be the key
     name: 'Dr. Alice Meridian',
     avatarUrl: 'https://i.pravatar.cc/150?u=alice-meridian',
     bioShort: 'Engaging Math & Science Tutor (Grades 6-10)',
@@ -14,14 +16,14 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 8,
     teachingPhilosophy:
       'To make learning an adventure, fostering curiosity and critical thinking through interactive and personalized lessons.',
-    monthlyFee: 4500, // Updated to monthly fee in Rupees
+    monthlyFee: 4500,
     qualifications: ['PhD in Applied Mathematics', 'Certified Math Teacher (Grades 6-12)'],
-    videoIntroUrl: 'https://www.w3schools.com/html/mov_bbb.mp4', // Placeholder video
+    videoIntroUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
     demoDetails: {
       offered: true,
       duration: '30 minutes',
       description: 'A get-to-know-you session, discuss learning goals, and tackle a sample problem together. See if my teaching style is a good fit!',
-      cost: 0, // Free demo
+      cost: 0,
     },
     rating: 4.9,
     reviews: 120,
@@ -43,7 +45,7 @@ export const sampleTeachersData: Teacher[] = [
     experienceYears: 5,
     teachingPhilosophy:
       'Sparking imagination and a love for reading and history through engaging stories and hands-on activities.',
-    monthlyFee: 3500, // Updated to monthly fee in Rupees
+    monthlyFee: 3500,
     qualifications: ["Master's in Elementary Education", 'Reading Specialist Certificate'],
     demoDetails: {
       offered: true,
@@ -58,72 +60,18 @@ export const sampleTeachersData: Teacher[] = [
       { day: 'Thursday', slots: [{ time: '01:00 PM - 01:30 PM', type: 'Demo' }, { time: '02:00 PM - 03:00 PM', type: 'Class' }] },
     ],
   },
-  {
-    id: 'teacher-carla-003',
-    name: 'Ms. Carla Rodriguez',
-    avatarUrl: 'https://i.pravatar.cc/150?u=carla-rodriguez',
-    bioShort: 'Passionate Coding & Robotics Mentor (All Ages)',
-    fullBio:
-      "Carla is a software engineer with a passion for STEM education. With 10 years in the tech industry and 4 years teaching coding bootcamps and workshops, she enjoys demystifying technology for learners of all ages. Carla specializes in Python, Scratch, and introductory robotics. She believes in project-based learning, allowing students to build tangible creations from their first lesson. Her approach is patient and encouraging, focused on building confidence and fostering problem-solving abilities. Carla is dedicated to preparing students for a tech-driven future by making coding accessible and enjoyable.",
-    subjectsTaught: ['Coding (Scratch, Python)', 'Robotics', 'Computer Science Principles'],
-    gradeLevelsTaught: ['Elementary (Grades 3-5)', 'Middle School (6-8)', 'High School (9-10+)'],
-    experienceYears: 4, // Teaching experience, more in industry
-    teachingPhilosophy:
-      'Empowering students to become creators with technology through hands-on projects and real-world applications.',
-    monthlyFee: 5000, // Updated to monthly fee in Rupees
-    qualifications: ['B.S. in Computer Science', 'Professional Software Developer'],
-    demoDetails: {
-      offered: true,
-      duration: '40 minutes',
-      description: 'Introduction to a simple coding concept (e.g., Scratch block or Python basics), a mini-challenge, and Q&A about coding pathways.',
-      cost: 100, // Demo cost in Rupees
-    },
-    rating: 4.8,
-    reviews: 95,
-    weeklyAvailability: [
-      { day: 'Monday', slots: [{ time: '05:00 PM - 05:40 PM', type: 'Demo' }] },
-      { day: 'Wednesday', slots: [{ time: '06:00 PM - 07:00 PM', type: 'Class' }, { time: '07:00 PM - 07:40 PM', type: 'Demo' }] },
-      { day: 'Saturday', slots: [{ time: '10:00 AM - 11:00 AM', type: 'Class' }, {time: '11:00 AM - 11:40 AM', type: 'Demo'}] },
-    ],
-  },
-  {
-    id: 'teacher-david-004',
-    name: 'Dr. David Lee',
-    avatarUrl: 'https://i.pravatar.cc/150?u=david-lee',
-    bioShort: 'Expert Biology & Environmental Science Educator (Grades 7-10)',
-    fullBio:
-      "David is a dedicated biologist with a PhD in Ecology and Evolutionary Biology. He has over 7 years of experience teaching high school and early college-level biology and environmental science. David is passionate about connecting classroom learning to real-world environmental issues and conservation. His teaching style incorporates virtual labs, case studies, and discussions to promote critical thinking and scientific literacy. He strives to make science relevant and engaging, encouraging students to explore the natural world and understand their role within it.",
-    subjectsTaught: ['Biology', 'Environmental Science', 'Earth Science'],
-    gradeLevelsTaught: ['Middle School (7-8)', 'High School (9-10)'],
-    experienceYears: 7,
-    teachingPhilosophy:
-      'Fostering a deep understanding and appreciation for the natural world through inquiry-based learning and real-world connections.',
-    monthlyFee: 4200, // Updated to monthly fee in Rupees
-    qualifications: ['PhD in Ecology', 'High School Science Teaching Credential'],
-    videoIntroUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    demoDetails: {
-      offered: true,
-      duration: '30 minutes',
-      description: "Discuss your student's interest in science, explore a fascinating biological concept, and outline how we can achieve their learning goals.",
-      cost: 0,
-    },
-    rating: 4.9,
-    reviews: 110,
-    weeklyAvailability: [
-      { day: 'Tuesday', slots: [{ time: '03:00 PM - 03:30 PM', type: 'Demo' }, { time: '05:00 PM - 06:00 PM', type: 'Class' }] },
-      { day: 'Thursday', slots: [{ time: '03:00 PM - 03:30 PM', type: 'Demo' }] },
-      { day: 'Sunday', slots: [{ time: '01:00 PM - 02:00 PM', type: 'Class' }] },
-    ],
-  },
+  // Add more sample teachers if needed for testing
 ];
 
-// Utility to get unique values for filters
-export const getUniqueSubjects = () => {
-  const allSubjects = sampleTeachersData.flatMap(t => t.subjectsTaught);
+// These utility functions are no longer strictly needed here if TeacherMarketplace
+// derives them directly from fetched data. Keeping them for reference or if
+// sample data is used as a fallback.
+export const getUniqueSubjects = (teachers: Teacher[] = sampleTeachersData) => {
+  const allSubjects = teachers.flatMap(t => t.subjectsTaught || []);
   return [...new Set(allSubjects)].sort();
 }
 
-export const getUniqueGradeLevels = () => {
-  const allGradeLevels = sampleTeachersData.flatMap(t => t.gradeLevelsTaught);
+export const getUniqueGradeLevels = (teachers: Teacher[] = sampleTeachersData) => {
+  const allGradeLevels = teachers.flatMap(t => t.gradeLevelsTaught || []);
   return [...new Set(allGradeLevels)].sort();
 }

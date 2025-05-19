@@ -5,8 +5,18 @@ import type { Teacher, TeacherFilters } from '@/types/teacher';
 import { useState, useEffect, useMemo } from 'react';
 import TeacherFilter from './teacher-filter';
 import TeacherList from './teacher-list';
-import { sampleTeachersData, getUniqueSubjects, getUniqueGradeLevels } from '@/data/sample-teachers';
-import { Skeleton } from '@/components/ui/skeleton'; // Assuming Skeleton component exists
+import { getAllTeachers } from '@/services/teacherService'; // Import Firebase service
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from 'lucide-react';
+
+
+// Helper function to get unique sorted strings from an array of arrays
+const getUniqueSortedValues = (teachers: Teacher[], keySelector: (teacher: Teacher) => string[]): string[] => {
+  const allValues = teachers.flatMap(keySelector);
+  return [...new Set(allValues)].sort();
+};
+
 
 export default function TeacherMarketplace() {
   const [allTeachers, setAllTeachers] = useState<Teacher[]>([]);
@@ -15,41 +25,64 @@ export default function TeacherMarketplace() {
     search: '',
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Simulate fetching data
   useEffect(() => {
-    setAllTeachers(sampleTeachersData);
-    setFilteredTeachers(sampleTeachersData); // Initially show all teachers
-    setLoading(false);
+    const fetchTeachers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const teachersFromDb = await getAllTeachers();
+        setAllTeachers(teachersFromDb);
+        setFilteredTeachers(teachersFromDb);
+      } catch (err) {
+        console.error("Failed to fetch teachers:", err);
+        setError("Failed to load teachers. Please ensure your Firebase setup is correct and data is available.");
+        // Fallback to empty array or sample data if preferred
+        setAllTeachers([]);
+        setFilteredTeachers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeachers();
   }, []);
 
-  const subjects = useMemo(() => getUniqueSubjects(), []);
-  const gradeLevels = useMemo(() => getUniqueGradeLevels(), []);
+  const subjects = useMemo(() => getUniqueSortedValues(allTeachers, t => t.subjectsTaught || []), [allTeachers]);
+  const gradeLevels = useMemo(() => getUniqueSortedValues(allTeachers, t => t.gradeLevelsTaught || []), [allTeachers]);
 
   const handleFilterChange = (newFilters: TeacherFilters) => {
     setFilters(newFilters);
-    setLoading(true);
+    // No need to set loading true here as filtering is synchronous on client-side data
+    // If filtering were async, then setLoading(true) would be appropriate
 
-    // Simulate filtering delay
-    setTimeout(() => {
-      const filtered = allTeachers.filter(teacher => {
-        const searchMatch = newFilters.search
-          ? teacher.name.toLowerCase().includes(newFilters.search.toLowerCase()) ||
-            teacher.bioShort?.toLowerCase().includes(newFilters.search.toLowerCase()) ||
-            teacher.fullBio.toLowerCase().includes(newFilters.search.toLowerCase()) ||
-            teacher.subjectsTaught.some(s => s.toLowerCase().includes(newFilters.search!.toLowerCase()))
-          : true;
-        const subjectMatch = newFilters.subject ? teacher.subjectsTaught.includes(newFilters.subject) : true;
-        const gradeLevelMatch = newFilters.gradeLevel ? teacher.gradeLevelsTaught.includes(newFilters.gradeLevel) : true;
-        const experienceMatch = newFilters.experienceMin ? teacher.experienceYears >= newFilters.experienceMin : true;
-        const ratingMatch = newFilters.ratingMin ? teacher.rating >= newFilters.ratingMin : true;
-        
-        return searchMatch && subjectMatch && gradeLevelMatch && experienceMatch && ratingMatch;
-      });
-      setFilteredTeachers(filtered);
-      setLoading(false);
-    }, 300);
+    const filtered = allTeachers.filter(teacher => {
+      const searchMatch = newFilters.search
+        ? teacher.name.toLowerCase().includes(newFilters.search.toLowerCase()) ||
+          teacher.bioShort?.toLowerCase().includes(newFilters.search.toLowerCase()) ||
+          (teacher.fullBio && teacher.fullBio.toLowerCase().includes(newFilters.search.toLowerCase())) ||
+          (teacher.subjectsTaught && teacher.subjectsTaught.some(s => s.toLowerCase().includes(newFilters.search!.toLowerCase())))
+        : true;
+      const subjectMatch = newFilters.subject ? (teacher.subjectsTaught && teacher.subjectsTaught.includes(newFilters.subject)) : true;
+      const gradeLevelMatch = newFilters.gradeLevel ? (teacher.gradeLevelsTaught && teacher.gradeLevelsTaught.includes(newFilters.gradeLevel)) : true;
+      const experienceMatch = newFilters.experienceMin ? teacher.experienceYears >= newFilters.experienceMin : true;
+      const ratingMatch = newFilters.ratingMin ? teacher.rating >= newFilters.ratingMin : true;
+      
+      return searchMatch && subjectMatch && gradeLevelMatch && experienceMatch && ratingMatch;
+    });
+    setFilteredTeachers(filtered);
   };
+
+  if (error) {
+    return (
+      <Alert variant="destructive" className="my-8">
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Error Loading Teachers</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
