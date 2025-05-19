@@ -1,6 +1,7 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BookMarked, LogIn, UserPlus } from 'lucide-react'; // Using BookMarked for logo
+import { BookMarked, LogIn, UserPlus, Users } from 'lucide-react'; // Using BookMarked for logo
 
 export default function Header() {
   return (
@@ -10,14 +11,17 @@ export default function Header() {
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <BookMarked className="h-6 w-6 text-primary" />
             <span className="font-bold sm:inline-block">
-              LearnBase
+              Blanklearn
             </span>
           </Link>
-          {/* Add Navigation Links here if needed */}
-          {/* <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link href="/courses">Courses</Link>
-            <Link href="/teachers">Teachers</Link>
-          </nav> */}
+          <nav className="hidden md:flex items-center space-x-4 text-sm font-medium">
+            <Link href="/#find-teachers" className="text-muted-foreground hover:text-primary transition-colors">
+                Find Teachers
+            </Link>
+            {/* <Link href="/how-it-works" className="text-muted-foreground hover:text-primary transition-colors">
+                How It Works
+            </Link> */}
+          </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
            {/* Placeholder for Auth buttons */}

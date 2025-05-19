@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google'; // Keep Geist Sans
 import './globals.css';
@@ -13,7 +14,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: 'Blanklearn', // Updated App Name
-  description: 'A Personalized Educational Marketplace', // Updated Description
+  description: 'Find the perfect teacher for personalized learning (Grades 1-10).', // Updated Description
 };
 
 export default function RootLayout({

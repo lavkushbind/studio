@@ -1,1 +1,2 @@
-import '@/ai/flows/course-recommendations.ts';
+
+import '@/ai/flows/teacher-recommendations.ts';
