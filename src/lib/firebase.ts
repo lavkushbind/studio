@@ -2,16 +2,15 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getDatabase, Database } from 'firebase/database';
 
-const {
-  NEXT_PUBLIC_FIREBASE_API_KEY,
-  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  NEXT_PUBLIC_FIREBASE_DATABASE_URL,
-  NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  NEXT_PUBLIC_FIREBASE_APP_ID,
-  NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-} = process.env;
+// Read and trim environment variables
+const NEXT_PUBLIC_FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim();
+const NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim();
+const NEXT_PUBLIC_FIREBASE_DATABASE_URL = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL?.trim();
+const NEXT_PUBLIC_FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
+const NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim();
+const NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID?.trim();
+const NEXT_PUBLIC_FIREBASE_APP_ID = process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim();
+const NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID?.trim();
 
 let app: FirebaseApp | undefined = undefined;
 let database: Database | undefined = undefined;
@@ -46,10 +45,12 @@ if (isLikelyPlaceholder(NEXT_PUBLIC_FIREBASE_PROJECT_ID)) {
   canInitialize = false;
 }
 
-if (isLikelyPlaceholder(NEXT_PUBLIC_FIREBASE_DATABASE_URL) || !isValidHttpUrl(NEXT_PUBLIC_FIREBASE_DATABASE_URL) || !(NEXT_PUBLIC_FIREBASE_DATABASE_URL?.includes('.firebaseio.com') || NEXT_PUBLIC_FIREBASE_DATABASE_URL?.includes('.firebasedatabase.app'))) {
+// Check for database URL specifically, as this was the source of the error
+if (!NEXT_PUBLIC_FIREBASE_DATABASE_URL || isLikelyPlaceholder(NEXT_PUBLIC_FIREBASE_DATABASE_URL) || !isValidHttpUrl(NEXT_PUBLIC_FIREBASE_DATABASE_URL) || !(NEXT_PUBLIC_FIREBASE_DATABASE_URL.includes('.firebaseio.com') || NEXT_PUBLIC_FIREBASE_DATABASE_URL.includes('.firebasedatabase.app'))) {
   criticalConfigError('NEXT_PUBLIC_FIREBASE_DATABASE_URL', NEXT_PUBLIC_FIREBASE_DATABASE_URL, 'https://<YOUR-PROJECT-ID>.firebaseio.com or https://<YOUR-PROJECT-ID>-default-rtdb.<REGION>.firebasedatabase.app');
   canInitialize = false;
 }
+
 
 if (canInitialize) {
   const firebaseConfig = {
@@ -81,7 +82,13 @@ if (canInitialize) {
 
   if (app) {
     try {
-      database = getDatabase(app);
+      // Ensure databaseURL is valid before attempting to getDatabase
+      if (!firebaseConfig.databaseURL || !isValidHttpUrl(firebaseConfig.databaseURL) || !(firebaseConfig.databaseURL.includes('.firebaseio.com') || firebaseConfig.databaseURL.includes('.firebasedatabase.app'))) {
+         console.error('FIREBASE FATAL ERROR: Attempting to getDatabase with an invalid databaseURL:', firebaseConfig.databaseURL);
+         database = undefined;
+      } else {
+        database = getDatabase(app);
+      }
     } catch (e: any) {
       console.error('FIREBASE FATAL ERROR: Failed to get Firebase Database instance.');
       console.error('Error message:', e.message);
@@ -102,7 +109,7 @@ if (!app) {
     'Check console for configuration errors related to .env.local.'
   );
 }
-if (!database && app) { // Only warn about database if app was at least attempted/exists
+if (!database && app) { 
   console.warn(
     'Firebase Realtime Database is not available, but the app instance might be. ' +
     'Database-specific features will not work. Check console for database-related configuration errors.'
