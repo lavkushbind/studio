@@ -140,7 +140,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                           <li key={slot.time} className="text-sm text-muted-foreground flex items-center gap-2">
                             <Clock className="h-3 w-3" />
                             <span>{slot.time}</span>
-                            <Badge variant={slot.type === 'Demo' ? 'destructive' : 'outline'} className="text-xs px-1.5 py-0.5">{slot.type}</Badge>
+                            <Badge variant={slot.type === 'Demo' ? 'destructive' : 'secondary'} className="text-xs px-1.5 py-0.5">{slot.type}</Badge>
                           </li>
                         ))}
                       </ul>
@@ -218,3 +218,4 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
     </div>
   );
 }
+
