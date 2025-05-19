@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Star, Users, Briefcase, BookOpen, DollarSign, Video, Mail, MessageSquare, Award, BookCopy, Brain, Edit3 } from 'lucide-react';
+import { Star, Users, Briefcase, BookOpen, DollarSign, Video, Mail, MessageSquare, Award, BookCopy, Brain, Edit3, CalendarClock, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
@@ -123,6 +123,37 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
             </Card>
           </div>
 
+          {/* Weekly Availability */}
+          {teacher.weeklyAvailability && teacher.weeklyAvailability.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><CalendarClock className="text-primary"/> Weekly Availability</CardTitle>
+                <CardDescription>General time slots. Specific availability may vary.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {teacher.weeklyAvailability.map(dailySlots => (
+                  <div key={dailySlots.day}>
+                    <h4 className="font-semibold text-md mb-1">{dailySlots.day}</h4>
+                    {dailySlots.slots.length > 0 ? (
+                      <ul className="space-y-1 pl-1">
+                        {dailySlots.slots.map(slot => (
+                          <li key={slot.time} className="text-sm text-muted-foreground flex items-center gap-2">
+                            <Clock className="h-3 w-3" />
+                            <span>{slot.time}</span>
+                            <Badge variant={slot.type === 'Demo' ? 'destructive' : 'outline'} className="text-xs px-1.5 py-0.5">{slot.type}</Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-muted-foreground pl-1">No slots listed for this day.</p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+
           {/* Qualifications */}
           {teacher.qualifications && teacher.qualifications.length > 0 && (
             <Card>
@@ -157,6 +188,7 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
                         <Edit3 className="mr-2"/>
                         Request Demo Session
                     </Button>
+                    {/* Consider linking to a specific booking form for this teacher later */}
                     <Button variant="outline" className="w-full">
                         <Mail className="mr-2"/>
                         Message {teacher.name.split(' ')[0]}
@@ -186,10 +218,3 @@ export default async function TeacherProfilePage({ params }: TeacherProfilePageP
     </div>
   );
 }
-
-// Generate static paths for sample teachers (optional, good for performance if data is static)
-// export async function generateStaticParams() {
-//   return sampleTeachersData.map((teacher) => ({
-//     id: teacher.id,
-//   }));
-// }

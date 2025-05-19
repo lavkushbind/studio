@@ -1,9 +1,9 @@
 
 import TeacherMarketplace from '@/components/teacher/teacher-marketplace';
-import AiRecommendations from '@/components/ai/ai-recommendations';
+import BookDemoForm from '@/components/demo/book-demo-form'; // New import
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Lightbulb, Search } from 'lucide-react';
+import { Search, CalendarCheck } from 'lucide-react'; // Changed Lightbulb to CalendarCheck
 
 export default function Home() {
   return (
@@ -22,17 +22,20 @@ export default function Home() {
               Find a Teacher
             </Button>
           </Link>
-          <Link href="#ai-recommendations">
+          <Link href="#book-demo"> {/* Updated href */}
              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                <Lightbulb className="mr-2 h-5 w-5" />
-                Get AI Recommendation
+                <CalendarCheck className="mr-2 h-5 w-5" /> {/* Updated Icon */}
+                Book a Free Demo
              </Button>
           </Link>
         </div>
       </section>
 
-      <section id="ai-recommendations" className="py-12 md:py-16">
-        <AiRecommendations />
+      <section id="book-demo" className="py-12 md:py-16 bg-muted/30 rounded-lg"> {/* New section for booking demo */}
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8 text-center">Book Your Free Demo Class</h2>
+          <BookDemoForm />
+        </div>
       </section>
 
       <section id="find-teachers" className="py-12 md:py-16">

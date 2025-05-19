@@ -1,4 +1,14 @@
 
+export interface TimeSlot {
+  time: string; // e.g., "10:00 AM - 11:00 AM", "02:00 PM - 02:30 PM"
+  type: 'Demo' | 'Class'; // Indicates if the slot is for a demo or regular class
+}
+
+export interface DailyAvailability {
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+  slots: TimeSlot[];
+}
+
 export interface Teacher {
   id: string;
   name: string;
@@ -24,6 +34,8 @@ export interface Teacher {
   // Teacher's overall rating and review count
   rating: number;
   reviews: number;
+
+  weeklyAvailability?: DailyAvailability[]; // Added for displaying general weekly slots
 }
 
 // Filters for finding teachers
@@ -33,6 +45,4 @@ export interface TeacherFilters {
   gradeLevel?: string;
   experienceMin?: number; // Minimum years of experience
   ratingMin?: number; // Minimum rating (e.g., 4 for 4+ stars)
-  // offersFreeDemo?: boolean; // Could be added later
-  // hourlyRateMax?: number; // Could be added later
 }

@@ -25,6 +25,11 @@ export const sampleTeachersData: Teacher[] = [
     },
     rating: 4.9,
     reviews: 120,
+    weeklyAvailability: [
+      { day: 'Monday', slots: [{ time: '02:00 PM - 02:30 PM', type: 'Demo' }, { time: '04:00 PM - 05:00 PM', type: 'Class' }] },
+      { day: 'Wednesday', slots: [{ time: '10:00 AM - 10:30 AM', type: 'Demo' }, { time: '03:00 PM - 04:00 PM', type: 'Class' }] },
+      { day: 'Friday', slots: [{ time: '01:00 PM - 01:30 PM', type: 'Demo' }] },
+    ],
   },
   {
     id: 'teacher-bob-002',
@@ -48,6 +53,10 @@ export const sampleTeachersData: Teacher[] = [
     },
     rating: 4.7,
     reviews: 85,
+    weeklyAvailability: [
+      { day: 'Tuesday', slots: [{ time: '09:00 AM - 09:30 AM', type: 'Demo' }, { time: '11:00 AM - 12:00 PM', type: 'Class' }] },
+      { day: 'Thursday', slots: [{ time: '01:00 PM - 01:30 PM', type: 'Demo' }, { time: '02:00 PM - 03:00 PM', type: 'Class' }] },
+    ],
   },
   {
     id: 'teacher-carla-003',
@@ -71,6 +80,11 @@ export const sampleTeachersData: Teacher[] = [
     },
     rating: 4.8,
     reviews: 95,
+    weeklyAvailability: [
+      { day: 'Monday', slots: [{ time: '05:00 PM - 05:40 PM', type: 'Demo' }] },
+      { day: 'Wednesday', slots: [{ time: '06:00 PM - 07:00 PM', type: 'Class' }, { time: '07:00 PM - 07:40 PM', type: 'Demo' }] },
+      { day: 'Saturday', slots: [{ time: '10:00 AM - 11:00 AM', type: 'Class' }, {time: '11:00 AM - 11:40 AM', type: 'Demo'}] },
+    ],
   },
   {
     id: 'teacher-david-004',
@@ -95,6 +109,11 @@ export const sampleTeachersData: Teacher[] = [
     },
     rating: 4.9,
     reviews: 110,
+    weeklyAvailability: [
+      { day: 'Tuesday', slots: [{ time: '03:00 PM - 03:30 PM', type: 'Demo' }, { time: '05:00 PM - 06:00 PM', type: 'Class' }] },
+      { day: 'Thursday', slots: [{ time: '03:00 PM - 03:30 PM', type: 'Demo' }] },
+      { day: 'Sunday', slots: [{ time: '01:00 PM - 02:00 PM', type: 'Class' }] },
+    ],
   },
 ];
 
