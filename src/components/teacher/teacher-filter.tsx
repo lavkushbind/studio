@@ -1,7 +1,7 @@
 
 'use client';
 
-import type { TeacherFilters } from '@/types/teacher';
+import type { TeacherFilters, Teacher } from '@/types/teacher'; // Import Teacher type
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,23 +14,22 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Filter, X, Star, Briefcase } from 'lucide-react'; // Added Star and Briefcase
+import { Filter, X, Star, Briefcase, Users } from 'lucide-react';
 
 interface TeacherFilterProps {
   initialFilters: TeacherFilters;
   onFilterChange: (filters: TeacherFilters) => void;
-  subjects: string[];
-  gradeLevels: string[];
+  // Instead of passing subjects/gradeLevels, pass all teachers to derive filter options
+  allTeachers: Teacher[];
 }
 
-const experienceLevels = ['All', '1+', '3+', '5+', '10+'];
-const ratings = ['All', '4+', '3+', '2+'];
+const experienceLevels = [1, 3, 5, 10]; // Min experience years
+const ratings = [1, 2, 3, 4]; // Min ratings
 
 export default function TeacherFilter({
   initialFilters,
   onFilterChange,
-  subjects,
-  gradeLevels,
+  allTeachers,
 }: TeacherFilterProps) {
   const [filters, setFilters] = useState<TeacherFilters>(initialFilters);
   const [isClient, setIsClient] = useState(false);
@@ -40,19 +39,22 @@ export default function TeacherFilter({
     setFilters(initialFilters);
   }, [initialFilters]);
 
+  const uniquePreferredStandards = (): number[] => {
+    const allStandards = allTeachers.flatMap(t => t.preferredStandard || []);
+    return [...new Set(allStandards)].sort((a, b) => a - b);
+  };
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (name: keyof TeacherFilters) => (value: string) => {
-    if (value === 'All') {
+    if (value === 'All' || value === '') {
       setFilters((prev) => ({ ...prev, [name]: undefined }));
-    } else if (name === 'ratingMin' || name === 'experienceMin') {
+    } else {
       setFilters((prev) => ({ ...prev, [name]: parseInt(value.replace('+', '')) }));
-    }
-    else {
-      setFilters((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -63,10 +65,9 @@ export default function TeacherFilter({
   const resetFilters = () => {
     const defaultFilters: TeacherFilters = {
       search: '',
-      subject: undefined,
-      gradeLevel: undefined,
-      experienceMin: undefined,
-      ratingMin: undefined,
+      standard: undefined,
+      minRating: undefined,
+      minExperience: undefined,
     };
     setFilters(defaultFilters);
     onFilterChange(defaultFilters);
@@ -75,6 +76,8 @@ export default function TeacherFilter({
   if (!isClient) {
     return null; // Avoid hydration mismatch
   }
+
+  const availableStandards = uniquePreferredStandards();
 
   return (
     <Card className="sticky top-4 shadow-sm">
@@ -86,71 +89,56 @@ export default function TeacherFilter({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-1">
-          <Label htmlFor="search">Search by Name or Subject</Label>
+          <Label htmlFor="search">Search by Name</Label>
           <Input
             id="search"
             name="search"
-            placeholder="e.g., Alice, Math, History"
+            placeholder="e.g., Jane Doe"
             value={filters.search || ''}
             onChange={handleInputChange}
           />
         </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="subject">Subject</Label>
-          <Select
-            value={filters.subject || 'All'}
-            onValueChange={handleSelectChange('subject')}
-          >
-            <SelectTrigger id="subject">
-              <SelectValue placeholder="Select Subject" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Subjects</SelectItem>
-              {subjects.map((subject) => (
-                <SelectItem key={subject} value={subject}>
-                  {subject}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1">
-          <Label htmlFor="gradeLevel">Grade Level</Label>
-          <Select
-            value={filters.gradeLevel || 'All'}
-            onValueChange={handleSelectChange('gradeLevel')}
-          >
-            <SelectTrigger id="gradeLevel">
-              <SelectValue placeholder="Select Grade Level" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Grade Levels</SelectItem>
-              {gradeLevels.map((grade) => (
-                <SelectItem key={grade} value={grade}>
-                  {grade}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {availableStandards.length > 0 && (
+          <div className="space-y-1">
+            <Label htmlFor="standard" className="flex items-center">
+              <Users className="mr-2 h-4 w-4 text-muted-foreground" /> Preferred Standard (Grade)
+            </Label>
+            <Select
+              value={filters.standard?.toString() || 'All'}
+              onValueChange={handleSelectChange('standard')}
+            >
+              <SelectTrigger id="standard">
+                <SelectValue placeholder="Any Standard" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Standards</SelectItem>
+                {availableStandards.map((standard) => (
+                  <SelectItem key={standard} value={standard.toString()}>
+                    Grade {standard}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         
         <div className="space-y-1">
-          <Label htmlFor="experienceMin" className="flex items-center">
+          <Label htmlFor="minExperience" className="flex items-center">
             <Briefcase className="mr-2 h-4 w-4 text-muted-foreground" /> Minimum Experience
           </Label>
           <Select
-            value={filters.experienceMin ? `${filters.experienceMin}+` : 'All'}
-            onValueChange={handleSelectChange('experienceMin')}
+            value={filters.minExperience ? `${filters.minExperience}+` : 'All'}
+            onValueChange={handleSelectChange('minExperience')}
           >
-            <SelectTrigger id="experienceMin">
+            <SelectTrigger id="minExperience">
               <SelectValue placeholder="Any Experience" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="All">Any Experience</SelectItem>
               {experienceLevels.map((exp) => (
-                <SelectItem key={exp} value={exp}>
-                  {exp === 'All' ? 'Any Experience' : `${exp} Years`}
+                <SelectItem key={exp} value={exp.toString()}>
+                  {exp}+ Years
                 </SelectItem>
               ))}
             </SelectContent>
@@ -158,20 +146,21 @@ export default function TeacherFilter({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="ratingMin" className="flex items-center">
+          <Label htmlFor="minRating" className="flex items-center">
              <Star className="mr-2 h-4 w-4 text-muted-foreground" /> Minimum Rating
           </Label>
           <Select
-            value={filters.ratingMin ? `${filters.ratingMin}+` : 'All'}
-            onValueChange={handleSelectChange('ratingMin')}
+            value={filters.minRating ? `${filters.minRating}+` : 'All'}
+            onValueChange={handleSelectChange('minRating')}
           >
-            <SelectTrigger id="ratingMin">
+            <SelectTrigger id="minRating">
               <SelectValue placeholder="Any Rating" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="All">Any Rating</SelectItem>
               {ratings.map((rating) => (
-                <SelectItem key={rating} value={rating}>
-                  {rating === 'All' ? 'Any Rating' : `${rating} Stars & Up`}
+                <SelectItem key={rating} value={rating.toString()}>
+                  {rating}+ Stars
                 </SelectItem>
               ))}
             </SelectContent>

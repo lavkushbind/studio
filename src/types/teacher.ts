@@ -1,48 +1,34 @@
 
-export interface TimeSlot {
-  time: string; // e.g., "10:00 AM - 11:00 AM", "02:00 PM - 02:30 PM"
-  type: 'Demo' | 'Class'; // Indicates if the slot is for a demo or regular class
-}
-
-export interface DailyAvailability {
-  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
-  slots: TimeSlot[];
-}
-
 export interface Teacher {
   id: string;
   name: string;
-  avatarUrl?: string;
-  bioShort?: string; // Short tagline or specialty
-  fullBio: string; // Detailed biography
-  subjectsTaught: string[]; // e.g., ["Math", "Science", "English"]
-  gradeLevelsTaught: string[]; // e.g., ["Grades 1-3", "Grades 4-6", "Middle School (7-8)", "High School (9-10)"]
-  experienceYears: number;
-  teachingPhilosophy?: string;
-  monthlyFee?: number; // Changed from hourlyRate to monthlyFee
-  qualifications?: string[]; // e.g., ["M.Ed. in Curriculum", "B.S. in Physics"]
-  videoIntroUrl?: string; // Link to a short video introduction
-
-  // Demo class specific details
-  demoDetails: {
-    offered: boolean;
-    duration: string; // e.g., "30 minutes"
-    description?: string; // What to expect in the demo
-    cost?: number; // 0 for free demo, or a nominal fee (in Rupees)
-  };
-
-  // Teacher's overall rating and review count
-  rating: number;
-  reviews: number;
-
-  weeklyAvailability?: DailyAvailability[]; // Added for displaying general weekly slots
+  rating: number; // e.g., 4.5
+  experience: number; // Years of experience
+  maxStudentsPerSlot: number;
+  availableSlots: string[]; // e.g., ["Mon 9-10 AM", "Wed 3-4 PM"]
+  preferredStandard: number[]; // e.g., [6, 7, 8] for grades 6, 7, 8
+  currentStudents: Record<string, string[]>; // Key: timeslot string, Value: array of student IDs
+  // Removed: avatarUrl, bioShort, fullBio, subjectsTaught (as string array),
+  // gradeLevelsTaught (as string array), teachingPhilosophy, monthlyFee,
+  // qualifications, videoIntroUrl, demoDetails, weeklyAvailability (old format), reviews count.
 }
 
-// Filters for finding teachers
+// Filters for finding teachers - simplified for the new model
 export interface TeacherFilters {
-  search?: string; // Search by name, bio, subjects
-  subject?: string;
-  gradeLevel?: string;
-  experienceMin?: number; // Minimum years of experience
-  ratingMin?: number; // Minimum rating (e.g., 4 for 4+ stars)
+  search?: string; // Search by name
+  standard?: number; // Filter by a specific standard/grade
+  minRating?: number; // Filter by minimum rating
+  minExperience?: number; // Filter by minimum experience years
+}
+
+// The following types were related to the old, more detailed model and are kept for reference
+// or if other parts of the app still use them, but they are not the primary Teacher model anymore.
+export interface OldTimeSlot {
+  time: string;
+  type: 'Demo' | 'Class';
+}
+
+export interface OldDailyAvailability {
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+  slots: OldTimeSlot[];
 }

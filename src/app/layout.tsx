@@ -1,20 +1,17 @@
 
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google'; // Keep Geist Sans
-import './globals.css';
-import { cn } from '@/lib/utils';
-import { Toaster } from '@/components/ui/toaster';
-import Header from '@/components/layout/header';
+import { Geist } from 'next/font/google';
+import './globals.css'; // Keep for basic styling
+import { cn } from '@/lib/utils'; // Keep if used for body className
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 });
 
-
 export const metadata: Metadata = {
-  title: 'Blanklearn', // Updated App Name
-  description: 'Find the perfect teacher for personalized learning (Grades 1-10).', // Updated Description
+  title: 'Blanklearn - Minimal Layout Test',
+  description: 'Testing minimal layout for debugging purposes.',
 };
 
 export default function RootLayout({
@@ -22,20 +19,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log('Minimal RootLayout Rendered - Debugging /page error');
   return (
     <html lang="en">
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          geistSans.variable // Use Geist Sans variable
+          geistSans.variable
         )}
       >
+        {/* Header and Toaster removed for testing */}
         <div className="relative flex min-h-screen flex-col">
-          <Header />
           <main className="flex-1">{children}</main>
-          {/* Add Footer if needed later */}
         </div>
-        <Toaster />
+        {/* Toaster removed */}
       </body>
     </html>
   );

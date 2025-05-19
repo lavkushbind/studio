@@ -5,21 +5,13 @@ import type { Teacher, TeacherFilters } from '@/types/teacher';
 import { useState, useEffect, useMemo } from 'react';
 import TeacherFilter from './teacher-filter';
 import TeacherList from './teacher-list';
-import { getAllTeachers } from '@/services/teacherService'; // Import Firebase service
+import { getAllTeachers } from '@/services/teacherService';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from 'lucide-react';
 
-
-// Helper function to get unique sorted strings from an array of arrays
-const getUniqueSortedValues = (teachers: Teacher[], keySelector: (teacher: Teacher) => string[]): string[] => {
-  const allValues = teachers.flatMap(keySelector);
-  return [...new Set(allValues)].sort();
-};
-
-
 export default function TeacherMarketplace() {
-  const [allTeachers, setAllTeachers] = useState<Teacher[]>([]);
+  const [allTeachersData, setAllTeachersData] = useState<Teacher[]>([]);
   const [filteredTeachers, setFilteredTeachers] = useState<Teacher[]>([]);
   const [filters, setFilters] = useState<TeacherFilters>({
     search: '',
@@ -33,13 +25,12 @@ export default function TeacherMarketplace() {
         setLoading(true);
         setError(null);
         const teachersFromDb = await getAllTeachers();
-        setAllTeachers(teachersFromDb);
+        setAllTeachersData(teachersFromDb);
         setFilteredTeachers(teachersFromDb);
       } catch (err) {
         console.error("Failed to fetch teachers:", err);
         setError("Failed to load teachers. Please ensure your Firebase setup is correct and data is available.");
-        // Fallback to empty array or sample data if preferred
-        setAllTeachers([]);
+        setAllTeachersData([]);
         setFilteredTeachers([]);
       } finally {
         setLoading(false);
@@ -49,27 +40,29 @@ export default function TeacherMarketplace() {
     fetchTeachers();
   }, []);
 
-  const subjects = useMemo(() => getUniqueSortedValues(allTeachers, t => t.subjectsTaught || []), [allTeachers]);
-  const gradeLevels = useMemo(() => getUniqueSortedValues(allTeachers, t => t.gradeLevelsTaught || []), [allTeachers]);
+  // Filters are now derived from allTeachersData within TeacherFilter component
 
   const handleFilterChange = (newFilters: TeacherFilters) => {
     setFilters(newFilters);
-    // No need to set loading true here as filtering is synchronous on client-side data
-    // If filtering were async, then setLoading(true) would be appropriate
 
-    const filtered = allTeachers.filter(teacher => {
+    const filtered = allTeachersData.filter(teacher => {
       const searchMatch = newFilters.search
-        ? teacher.name.toLowerCase().includes(newFilters.search.toLowerCase()) ||
-          teacher.bioShort?.toLowerCase().includes(newFilters.search.toLowerCase()) ||
-          (teacher.fullBio && teacher.fullBio.toLowerCase().includes(newFilters.search.toLowerCase())) ||
-          (teacher.subjectsTaught && teacher.subjectsTaught.some(s => s.toLowerCase().includes(newFilters.search!.toLowerCase())))
+        ? teacher.name.toLowerCase().includes(newFilters.search.toLowerCase())
         : true;
-      const subjectMatch = newFilters.subject ? (teacher.subjectsTaught && teacher.subjectsTaught.includes(newFilters.subject)) : true;
-      const gradeLevelMatch = newFilters.gradeLevel ? (teacher.gradeLevelsTaught && teacher.gradeLevelsTaught.includes(newFilters.gradeLevel)) : true;
-      const experienceMatch = newFilters.experienceMin ? teacher.experienceYears >= newFilters.experienceMin : true;
-      const ratingMatch = newFilters.ratingMin ? teacher.rating >= newFilters.ratingMin : true;
       
-      return searchMatch && subjectMatch && gradeLevelMatch && experienceMatch && ratingMatch;
+      const standardMatch = newFilters.standard
+        ? teacher.preferredStandard?.includes(newFilters.standard)
+        : true;
+      
+      const experienceMatch = newFilters.minExperience
+        ? teacher.experience >= newFilters.minExperience
+        : true;
+      
+      const ratingMatch = newFilters.minRating
+        ? teacher.rating >= newFilters.minRating
+        : true;
+      
+      return searchMatch && standardMatch && experienceMatch && ratingMatch;
     });
     setFilteredTeachers(filtered);
   };
@@ -90,8 +83,7 @@ export default function TeacherMarketplace() {
         <TeacherFilter
           initialFilters={filters}
           onFilterChange={handleFilterChange}
-          subjects={subjects}
-          gradeLevels={gradeLevels}
+          allTeachers={allTeachersData} // Pass all teachers for filter options
         />
       </div>
       <div className="md:col-span-3">
@@ -109,37 +101,33 @@ export default function TeacherMarketplace() {
   );
 }
 
-// Skeleton component for teacher card loading state
+// Skeleton component for teacher card loading state - simplified
 function TeacherCardSkeleton() {
   return (
     <div className="border rounded-lg overflow-hidden shadow-sm p-4 space-y-3">
       <div className="flex items-center gap-4">
-        <Skeleton className="h-20 w-20 rounded-full" />
+        <Skeleton className="h-16 w-16 rounded-full" />
         <div className="space-y-2 flex-grow">
             <Skeleton className="h-5 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-1/2" />
         </div>
       </div>
-      <Skeleton className="h-4 w-1/3" />
+      <Skeleton className="h-4 w-1/3 mt-2" /> {/* For preferred standards label */}
       <div className="flex flex-wrap gap-1">
         <Skeleton className="h-5 w-16 rounded-full" />
-        <Skeleton className="h-5 w-20 rounded-full" />
-        <Skeleton className="h-5 w-12 rounded-full" />
-      </div>
-      <Skeleton className="h-4 w-1/3" />
-       <div className="flex flex-wrap gap-1">
-        <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-5 w-20 rounded-full" />
       </div>
       <div className="flex justify-between items-center pt-2">
         <Skeleton className="h-5 w-24" />
         <Skeleton className="h-5 w-28" />
       </div>
-       <Skeleton className="h-5 w-1/2" />
-      <div className="flex justify-between items-center pt-2 border-t mt-2">
-        <Skeleton className="h-8 w-1/4" />
-        <Skeleton className="h-8 w-1/3" />
+       <Skeleton className="h-4 w-1/3 mt-2" /> {/* For available slots label */}
+        <div className="flex flex-wrap gap-1">
+        <Skeleton className="h-5 w-24 rounded-full" />
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </div>
+      <div className="pt-2 border-t mt-2">
+        <Skeleton className="h-8 w-full" /> {/* For View Profile button */}
       </div>
     </div>
   );
