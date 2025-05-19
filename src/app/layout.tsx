@@ -12,7 +12,7 @@ const geistSans = Geist({
 
 
 export const metadata: Metadata = {
-  title: 'LearnBase', // Updated App Name
+  title: 'Blanklearn', // Updated App Name
   description: 'A Personalized Educational Marketplace', // Updated Description
 };
 

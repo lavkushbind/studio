@@ -1,10 +1,30 @@
 import type { Course } from '@/types/course';
 
 export const sampleTeachers = [
-  { id: 't1', name: 'Alice Wonderland', bioShort: 'Creative Coding Expert' },
-  { id: 't2', name: 'Bob The Builder', bioShort: 'History Buff & Storyteller' },
-  { id: 't3', name: 'Charlie Chaplin', bioShort: 'Physics & Astronomy Guru' },
-  { id: 't4', name: 'Diana Prince', bioShort: 'Art & Design Enthusiast' },
+  {
+    id: 't1',
+    name: 'Alice Wonderland',
+    bioShort: 'Creative Coding Expert',
+    fullBio: 'Alice has over 10 years of experience in making coding fun and accessible for all ages. She believes in learning by doing and incorporates many hands-on projects in her courses. Her expertise lies in Python, game development, and creative applications of technology.'
+  },
+  {
+    id: 't2',
+    name: 'Bob The Builder',
+    bioShort: 'History Buff & Storyteller',
+    fullBio: "Bob is a passionate historian with a Master's degree in Modern History. He specializes in 20th-century global conflicts and societal changes. Bob's teaching style is engaging and narrative-driven, bringing historical events to life through vivid storytelling and primary source exploration."
+  },
+  {
+    id: 't3',
+    name: 'Charlie Chaplin',
+    bioShort: 'Physics & Astronomy Guru',
+    fullBio: "Charlie, a PhD in Astrophysics, has a knack for explaining complex scientific concepts in an understandable way. He has worked on several space exploration projects and loves to share his passion for the cosmos with young learners. His courses are filled with amazing visuals and interactive simulations."
+  },
+  {
+    id: 't4',
+    name: 'Diana Prince',
+    bioShort: 'Art & Design Enthusiast',
+    fullBio: "Diana is a professional artist and designer with over 15 years of experience in both traditional and digital media. She holds an MFA in Fine Arts and has exhibited her work internationally. Diana is dedicated to helping students unlock their creative potential and develop their unique artistic voice."
+  },
 ];
 
 export const sampleCourses: Course[] = [

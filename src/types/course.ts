@@ -3,6 +3,7 @@ export interface Teacher {
   name: string;
   avatarUrl?: string;
   bioShort?: string;
+  fullBio?: string; // Added full biography field
   // Add more teacher details as needed
 }
 

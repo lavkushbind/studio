@@ -169,16 +169,19 @@ export default async function CourseDetailsPage({ params }: CourseDetailsPagePro
              {/* Instructor Card */}
              <Card>
                 <CardHeader>
-                <CardTitle>Instructor</CardTitle>
+                <CardTitle>About the Instructor</CardTitle>
                 </CardHeader>
-                <CardContent className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
+                <CardContent className="flex items-start gap-4"> {/* Changed to items-start for better alignment with multi-line bio */}
+                <Avatar className="h-16 w-16 flex-shrink-0"> {/* Added flex-shrink-0 */}
                     <AvatarImage src={course.teacher.avatarUrl || `https://i.pravatar.cc/150?u=${course.teacher.name}`} alt={course.teacher.name} data-ai-hint="teacher instructor avatar"/>
                     <AvatarFallback>{course.teacher.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div>
-                    <h3 className="font-semibold">{course.teacher.name}</h3>
-                    <p className="text-sm text-muted-foreground">{course.teacher.bioShort || 'Experienced Educator'}</p>
+                <div className="flex-grow"> {/* Added flex-grow */}
+                    <h3 className="font-semibold text-lg">{course.teacher.name}</h3>
+                    <p className="text-sm text-muted-foreground font-medium mb-1">{course.teacher.bioShort || 'Experienced Educator'}</p>
+                    {course.teacher.fullBio && (
+                        <p className="text-sm text-muted-foreground whitespace-pre-line">{course.teacher.fullBio}</p>
+                    )}
                     {/* Link to teacher profile page can be added here */}
                 </div>
                 </CardContent>
