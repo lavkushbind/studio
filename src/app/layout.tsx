@@ -1,8 +1,10 @@
 
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
-import './globals.css'; // Keep for basic styling
-import { cn } from '@/lib/utils'; // Keep if used for body className
+import './globals.css';
+import { cn } from '@/lib/utils';
+import Header from '@/components/layout/header';
+import { Toaster } from '@/components/ui/toaster';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -10,8 +12,11 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'Blanklearn - Minimal Layout Test',
-  description: 'Testing minimal layout for debugging purposes.',
+  title: 'Blanklearn - Find Your Teacher',
+  description: 'Find the perfect teacher for personalized learning (Grades 1-10).',
+  // It's good practice to have a favicon, but ensure /public/favicon.ico exists
+  // or remove this line if you don't have one to avoid potential 404s for the icon itself.
+  // icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 export default function RootLayout({
@@ -19,20 +24,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log('Minimal RootLayout Rendered - Debugging /page error (Turbopack test)');
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           geistSans.variable
         )}
       >
-        {/* Header and Toaster removed for testing */}
         <div className="relative flex min-h-screen flex-col">
-          <main className="flex-1">{children}</main>
+          <Header />
+          <main className="flex-1 py-6">{children}</main>
+          <Toaster />
         </div>
-        {/* Toaster removed */}
       </body>
     </html>
   );
