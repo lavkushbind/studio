@@ -19,7 +19,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log('Minimal RootLayout Rendered - Debugging /page error');
+  console.log('Minimal RootLayout Rendered - Debugging /page error (Turbopack test)');
   return (
     <html lang="en">
       <body
